@@ -40,7 +40,6 @@ jobs:
         path: dist/oplus_super_packer.exe
 
     - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
         files: dist/oplus_super_packer.exe
