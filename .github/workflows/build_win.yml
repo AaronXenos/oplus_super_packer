@@ -12,6 +12,8 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      TAG_NAME: ${{ github.ref_name }}
 
     steps:
     - name: Checkout code
@@ -33,15 +35,20 @@ jobs:
     - name: Build with PyInstaller
       run: pyinstaller --clean oplus_super_packer.spec
 
+    - name: Package zip
+      run: >-
+        Compress-Archive -Path "dist/oplus_super_packer.exe","partition_tools"
+        -DestinationPath "dist/oplus_super_packer-${{ env.TAG_NAME }}.zip" -Force
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: oplus_super_packer
-        path: dist/oplus_super_packer.exe
+        name: oplus_super_packer_${{ env.TAG_NAME }}
+        path: dist/oplus_super_packer-${{ env.TAG_NAME }}.zip
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: dist/oplus_super_packer.exe
+        files: dist/oplus_super_packer-${{ env.TAG_NAME }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
